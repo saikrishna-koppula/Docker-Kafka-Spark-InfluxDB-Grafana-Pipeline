@@ -36,5 +36,4 @@ This project builds a real-time data streaming pipeline using Kafka, Spark, Infl
 This project demonstrates a scalable and fault-tolerant approach to real-time stock market data streaming. By leveraging Kafka, Spark, and InfluxDB, it ensures reliable message processing, efficient storage, and real-time visualization using Grafana. The architecture supports high-frequency trading environments and is adaptable for advanced financial analytics.
 
 ## Additional Links
-- [Demo](./DEMO.md)
-- [Challenges](./CHALLENGES.md)
+[Demo Video](./Demo_Video/Stock%20Market%20Data%20Demo.mp4)
