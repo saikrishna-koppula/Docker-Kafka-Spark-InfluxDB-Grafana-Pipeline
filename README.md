@@ -30,3 +30,4 @@ This project demonstrates a scalable and fault-tolerant approach to real-time st
 ## Additional Links
 - [Demo Video](https://drive.google.com/file/d/1MLHAVVZpg3IgEZPkqJxF7O6Gpwr4KQOA/view?usp=sharing)
 - [Challenges Encountered and Solutions Implemented](./Challenges.md)
+- [Deploy this Solution Locally](./Deploy_Locally.md)
