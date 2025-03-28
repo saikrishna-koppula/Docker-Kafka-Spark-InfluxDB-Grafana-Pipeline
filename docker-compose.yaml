@@ -1,0 +1,170 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.8.0
+    container_name: kafka
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 2s
+      retries: 3
+      start_period: 5s
+    depends_on:
+      - zookeeper
+
+  kafka_topic_creator:
+    image: confluentinc/cp-kafka:7.8.0
+    container_name: kafka_topic_creator
+    depends_on:
+      kafka:
+        condition: service_healthy
+    volumes:
+      - .:/home
+    #entrypoint: ["/bin/sh", "-c"]
+    command: ["sh", "/home/Environment_Setup/Kafka/create_kafka_topics.sh"]
+
+  crypto_curr_hist_full_load:
+    build:
+      context: ./Docker_Files
+      dockerfile: Dockerfile.producer
+    image: crypto_curr_hist_full_load
+    container_name: crypto_curr_hist_full_load
+    command: ["python", "crypto_curr_hist_full_load.py"]
+    stdin_open: true  # Keep stdin open
+    tty: true         # Allocate a terminal
+    volumes:
+      - .:/home
+    depends_on:
+      kafka_topic_creator:
+        condition: service_completed_successfully
+    
+  crypto_curr_hist_7d_load:
+    build:
+      context: ./Docker_Files
+      dockerfile: Dockerfile.producer
+    image: crypto_curr_hist_7d_load
+    container_name: crypto_curr_hist_7d_load
+    command: ["python", "crypto_curr_hist_7d_load.py"]
+    stdin_open: true  # Keep stdin open
+    tty: true         # Allocate a terminal
+    volumes:
+      - .:/home
+    depends_on:
+      kafka_topic_creator:
+        condition: service_completed_successfully
+    
+  stocks_hist_full_load:
+    build:
+      context: ./Docker_Files
+      dockerfile: Dockerfile.producer
+    image: stocks_hist_full_load
+    container_name: stocks_hist_full_load
+    command: ["python", "stocks_hist_full_load.py"]
+    stdin_open: true  # Keep stdin open
+    tty: true         # Allocate a terminal
+    volumes:
+      - .:/home
+    depends_on:
+      kafka_topic_creator:
+        condition: service_completed_successfully
+
+  stocks_hist_7d_load:
+    build:
+      context: ./Docker_Files
+      dockerfile: Dockerfile.producer
+    image: stocks_hist_7d_load
+    container_name: stocks_hist_7d_load
+    command: ["python", "stocks_hist_7d_load.py"]
+    stdin_open: true  # Keep stdin open
+    tty: true         # Allocate a terminal
+    volumes:
+      - .:/home
+    depends_on:
+      kafka_topic_creator:
+        condition: service_completed_successfully
+
+  stocks_live_data_load:
+    build:
+      context: ./Docker_Files
+      dockerfile: Dockerfile.producer
+    image: stocks_live_data_load
+    container_name: stocks_live_data_load
+    command: ["python", "stocks_live_data_load.py"]
+    stdin_open: true  # Keep stdin open
+    tty: true         # Allocate a terminal
+    volumes:
+      - .:/home
+    depends_on:
+      kafka_topic_creator:
+        condition: service_completed_successfully
+    
+  crypto_curr_live_data_load:
+    build:
+      context: ./Docker_Files
+      dockerfile: Dockerfile.producer
+    image: crypto_curr_live_data_load
+    container_name: crypto_curr_live_data_load
+    command: ["python", "crypto_curr_live_data_load.py"]
+    stdin_open: true  # Keep stdin open
+    tty: true         # Allocate a terminal
+    volumes:
+      - .:/home
+    depends_on:
+      kafka_topic_creator:
+        condition: service_completed_successfully
+
+  spark_consumer:
+    build:
+      context: ./Docker_Files
+      dockerfile: Dockerfile.consumer_spark
+    image: spark_consumer
+    container_name: spark_consumer
+    ports:
+      - '8080:8080'
+      - '4040:4040'
+    tty: true         # Allocate a terminal    
+    volumes:
+      - .:/home
+    depends_on:
+      kafka_topic_creator:
+          condition: service_completed_successfully
+      crypto_curr_hist_full_load:
+          condition: service_started
+
+  influxdb:
+    image: bitnami/influxdb:2.5.1
+    container_name: influxdb
+    restart: always
+    ports:
+      - 8086:8086
+    volumes:
+      - ./Volumes/influxdb_storage:/bitnami/influxdb
+    environment:
+      INFLUXDB_ADMIN_USER_PASSWORD: ${INFLUXDB_ADMIN_USER_PASSWORD}
+      INFLUXDB_USER: ${INFLUXDB_USER}
+      INFLUXDB_USER_PASSWORD: ${INFLUXDB_USER_PASSWORD}
+      INFLUXDB_ADMIN_USER_TOKEN: ${INFLUX_TOKEN}
+  
+  grafana:
+    #image: grafana/grafana-oss:8.4.3
+    image: grafana/grafana-oss:11.6.0
+    volumes:
+      - ./Volumes/grafana_storage:/var/lib/grafana:rw
+    depends_on:
+      - influxdb
+    ports:
+      - 3000:3000

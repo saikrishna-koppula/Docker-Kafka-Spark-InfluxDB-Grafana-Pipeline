@@ -1,0 +1,26 @@
+FROM bitnami/spark:3.5.4-debian-12-r2
+
+USER root
+
+RUN pip install kafka-python
+RUN apt-get update -y
+RUN apt-get install -y curl
+RUN pip install influxdb-client
+RUN pip install pandas
+
+RUN curl -O https://repo1.maven.org/maven2/org/apache/spark/spark-sql-kafka-0-10_2.12/3.5.4/spark-sql-kafka-0-10_2.12-3.5.4.jar
+RUN curl -O https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/3.6.2/kafka-clients-3.6.2.jar
+RUN curl -O https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-10-assembly_2.12/3.5.4/spark-streaming-kafka-0-10-assembly_2.12-3.5.4.jar
+RUN curl -O https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-10_2.12/3.5.4/spark-streaming-kafka-0-10_2.12-3.5.4.jar
+RUN curl -O https://repo1.maven.org/maven2/org/apache/spark/spark-token-provider-kafka-0-10_2.12/3.5.4/spark-token-provider-kafka-0-10_2.12-3.5.4.jar
+RUN curl -O https://repo1.maven.org/maven2/org/apache/commons/commons-pool2/2.11.1/commons-pool2-2.11.1.jar
+
+RUN mv *.jar /opt/bitnami/spark/jars/
+
+USER 1001
+
+WORKDIR /
+
+CMD ["/opt/bitnami/spark/bin/spark-submit", "--master", "local[*]", "/home/Consumer/spark_consumer_script.py"] 
+
+#CMD ["sleep","1000"]

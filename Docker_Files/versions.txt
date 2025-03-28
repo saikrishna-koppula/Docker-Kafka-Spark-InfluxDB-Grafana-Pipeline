@@ -1,0 +1,1 @@
+bitnami/spark:3.5.4-debian-12-r2
