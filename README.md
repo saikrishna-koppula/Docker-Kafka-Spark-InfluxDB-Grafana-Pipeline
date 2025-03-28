@@ -3,23 +3,15 @@
 ## Overview
 This project builds a real-time data streaming pipeline using Kafka, Spark, InfluxDB and Grafana to process stock market data. The pipeline ingests live stock price updates, applies transformations, and stores the results for real-time monitoring and analytics. The goal is to handle high-throughput financial data efficiently while ensuring scalability and fault tolerance.
 
-## Tech Stack
-- **Data Collection:** Python using external API
-- **Message Broker:** Apache Kafka
-- **Data Processing:** Apache Spark (Structured Streaming)
-- **Time-Series Storage:** InfluxDB
-- **Visualization & Monitoring:** Grafana
-- **Containerization & Deployment:** Docker, Docker Compose
+## Tech Stack & Architecture
+- **Data Collection:** Python using external API to fetch real-time stock market data.
+- **Message Broker:** Apache Kafka, which manages message distribution across consumers.
+- **Data Processing:** Apache Spark (Structured Streaming) for consuming, processing, and transforming stock market data in real time.
+- **Time-Series Storage:** InfluxDB, used to store processed stock data efficiently.
+- **Visualization & Monitoring:** Grafana, which visualizes stock price trends, moving averages, and trade volumes.
+- **Containerization & Deployment:** Docker and Docker Compose for containerization and deployment of the system.
 
-## Architecture
-1. **Data Source:** Fetches real-time stock market data from an external API.
-2. **Kafka Producer:** Publishes stock price updates and trade data to Kafka topics.
-3. **Kafka Broker:** Manages message distribution across consumers.
-4. **Spark Structured Streaming:** Consumes, processes, and transforms stock market data in real time.
-5. **Storage Layer:** Writes processed stock data to InfluxDB for efficient time-series storage.
-6. **Dashboard:** Uses Grafana to visualize stock price trends, moving averages, and trade volumes.
-
-**Note:** The project not only allows real-time stock price updates but also supports batch historical analysis.
+**Note:** The architecture not only allows real-time stock price updates but also supports batch historical analysis.
 
 ## Lessons Learned & Future Improvements
 ### Lessons Learned
@@ -37,4 +29,4 @@ This project demonstrates a scalable and fault-tolerant approach to real-time st
 
 ## Additional Links
 - [Demo Video](https://drive.google.com/file/d/1MLHAVVZpg3IgEZPkqJxF7O6Gpwr4KQOA/view?usp=sharing)
-- [Challenges Faced](./Challenges.md)
+- [Challenges Encountered and Solutions Implemented](./Challenges.md)
