@@ -25,7 +25,7 @@
 - Used InfluxDB’s continuous queries to pre-aggregate stock data (e.g., moving averages).
 - Optimized tagging strategy to improve query performance for different stock symbols.
 
-**Outcome:** Reduced query late
+**Outcome:** Reduced query latency
 
 ### 4. Accurate Timestamp Conversion
 **Problem:** Stock data contained timestamps in different formats, causing inconsistencies.
