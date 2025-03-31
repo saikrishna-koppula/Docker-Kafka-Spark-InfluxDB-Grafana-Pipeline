@@ -28,7 +28,9 @@ cd Docker-Kafka-Spark-InfluxDB-Grafana-Pipeline
   INFLUX_TOKEN=your_influxdb_token
   ```
 - Replace the placeholders with actual values.
+
 Note: You can set the admin user and password as per your preference, these will be used to login for the first time to influxdb.
+
 - **Ensure the `.env` file is not committed to version control** by adding it to `.gitignore`:
   ```bash
   echo ".env" >> .gitignore
