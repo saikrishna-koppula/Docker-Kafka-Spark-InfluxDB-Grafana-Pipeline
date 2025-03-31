@@ -1,5 +1,7 @@
 # Real-Time Stock Market Data Streaming Pipeline
 
+![Architecture Image](./images/Architecture.jpeg)
+
 ## Overview
 This project builds a real-time data streaming pipeline using Kafka, Spark, InfluxDB and Grafana to process stock market data. The pipeline ingests live stock price updates, applies transformations, and stores the results for real-time monitoring and analytics. The goal is to handle high-throughput financial data efficiently while ensuring scalability and fault tolerance.
 
